@@ -1,9 +1,11 @@
 import random
 import numpy as np
+import math
 
 class Node:
     weights = None
     n_weigths = 0
+    bias = 1
 
     def __init__(self, n_weigths = 4):
         # Initiate the weigths with random value
@@ -31,3 +33,16 @@ class Layer:
 
     def __str__(self):
         return "Layer :\n  > nb_nodes = " + str(self.nb_nodes)
+
+
+
+def gradient_descent(inputs, batch_size = 10, hidden_layer = 1, nb_nodes = 2, learning_rate= 0.01, momentum = 0.01, epoch = 10):
+
+    """
+    Returns sigmoid value of x
+    """
+    def sigmoid(x):
+        return 1 / (1 + math.exp(-x))
+
+
+    return
