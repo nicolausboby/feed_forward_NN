@@ -54,9 +54,10 @@ class FeedForwardNeuralNetwork:
 
     def cost_function(self, features, targets, weights):
         """
-        :param features:
-        :param targets:
-        :param weights:
+        :note : Should be done only by output node (1 only)
+        :param features: Attributes from data
+        :param targets: actual result from features
+        :param weights: Coefficients (retrieved from notes)
         :return: average squared error among predictions
         """
         N = len(targets)
