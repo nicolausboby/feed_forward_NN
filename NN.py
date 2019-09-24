@@ -2,23 +2,24 @@ import random
 import numpy as np
 import math
 
+
 class Node:
     weights = None
-    n_weigths = 0
+    n_weights = 0
     bias = 1
 
-    def __init__(self, n_weigths = 4):
-        # Initiate the weigths with random value
+    def __init__(self, n_weights=4):
+        # Initiate the weights with random value
         self.weights = []
-        self.n_weigths = n_weigths
-        for i in range(n_weigths):
+        self.n_weights = n_weights
+        for i in range(n_weights):
             self.weights.append(random.random())
 
     def __str__(self):
         strpr = ""
-        for i in range(self.n_weigths):
-            strpr +=  "\n" + "weigth " + str(i) + " = " + str(self.weights[i])
-        return ("n_weigths = " + str(self.n_weigths) + strpr)
+        for i in range(self.n_weights):
+            strpr += "\n" + "weight " + str(i) + " = " + str(self.weights[i])
+        return "n_weights = " + str(self.n_weights) + strpr
 
 
 class Layer:
@@ -35,14 +36,63 @@ class Layer:
         return "Layer :\n  > nb_nodes = " + str(self.nb_nodes)
 
 
+class FeedForwardNeuralNetwork:
+    layers = []
+    nb_layers = 0
+    nb_nodes = 0
+    l_r = 0.01  # Constant
+    momentum = 0.01  # Constant
 
-def gradient_descent(inputs, batch_size = 10, hidden_layer = 1, nb_nodes = 2, learning_rate= 0.01, momentum = 0.01, epoch = 10):
+    def __init__(self, nb_layers=1, nb_nodes=2):
+        self.nb_layers = nb_layers
+        self.nb_nodes = nb_nodes
+        for i in range(nb_layers):
+            self.layers.append(Layer(nb_nodes))
 
-    """
-    Returns sigmoid value of x
-    """
-    def sigmoid(x):
-        return 1 / (1 + math.exp(-x))
+    def __str__(self):
+        return "FFNN : \n  > nb_layers = " + str(self.nb_layers)
+
+    def cost_function(self, features, targets, weights):
+        """
+        :note : Should be done only by output node (1 only)
+        :param features: Attributes from data
+        :param targets: actual result from features
+        :param weights: Coefficients (retrieved from notes)
+        :return: average squared error among predictions
+        """
+        N = len(targets)
+        predictions = np.dot(features, weights)
+        squared_error = (targets - predictions) ** 2
+        return 1.0 / (2 * N) * squared_error.sum()
+
+    def mb_gradient_descent(self, inputs, batch_size= 32, epoch=10):
+        """
+        :param inputs: train data
+        :param batch_size: Size of batch per weight update
+        :param hidden_layer: Number of hidden layer(s) inside NN
+        :param nb_nodes: Number of nodes per hidden layer
+        :param l_r: Size of steps taken
+        :param momentum:
+        :param epoch: number of iteration(s)
+        :return: trained model
+        """
+
+        def sigmoid(x):
+            """
+            :param x: a numeric value
+            :return: sigmoid value of x
+            """
+            return 1 / (1 + math.exp(-x))
+
+        for i in range(epoch):
+            # Do Mini Batch SGD here
+            np.random.shuffle(inputs)  # just dummy
 
 
-    return
+# Test
+FFNN = FeedForwardNeuralNetwork()
+print(FFNN.__str__())
+for layer in FFNN.layers:
+    print(layer.__str__())
+    for node in layer.nodes:
+        print(node.__str__())
