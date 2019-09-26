@@ -7,6 +7,7 @@ class Node:
     weights = None
     n_weights = 0
     output = -1
+    delta = -1
     bias = 1
 
     def __init__(self, n_weights=4):
@@ -18,6 +19,9 @@ class Node:
 
     def set_output(self, output):
         self.output = output
+
+    def set_delta(self, delta):
+        self.delta = delta
 
     def __str__(self):
         strpr = ""
@@ -94,7 +98,19 @@ class FeedForwardNeuralNetwork:
 
     def feed_forward(self, inputs):
         for layer in self.layers:
-            
+
+    def backward_prop(self, target):
+        for i, layer in enumerate(reversed(self.layers)):
+            if i == self.nb_layers - 1:
+                for node in layer.nodes:
+                    delta = node.output * (1 - node.output) * (target - node.output)
+                    node.set_delta(delta)
+            else:
+                for j, node in enumerate(layer.nodes):
+                    out_node = self.layers[-1].nodes[0]
+                    delta = node.output * (1 - node.output) * (out_node.weights[j+1] * out_node.delta)
+                    node.set.delta(delta)
+        return
 
 
 # Test
