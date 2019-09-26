@@ -6,6 +6,7 @@ import math
 class Node:
     weights = None
     n_weights = 0
+    output = -1
     bias = 1
 
     def __init__(self, n_weights=4):
@@ -14,6 +15,9 @@ class Node:
         self.n_weights = n_weights
         for i in range(n_weights):
             self.weights.append(random.random())
+
+    def set_output(self, output):
+        self.output = output
 
     def __str__(self):
         strpr = ""
@@ -87,6 +91,10 @@ class FeedForwardNeuralNetwork:
         for i in range(epoch):
             # Do Mini Batch SGD here
             np.random.shuffle(inputs)  # just dummy
+
+    def feed_forward(self, inputs):
+        for layer in self.layers:
+            
 
 
 # Test
