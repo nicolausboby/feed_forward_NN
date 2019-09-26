@@ -56,6 +56,13 @@ class FeedForwardNeuralNetwork:
     def __str__(self):
         return "FFNN : \n  > nb_layers = " + str(self.nb_layers)
 
+    def sigmoid(self, x):
+        """
+        :param x: a numeric value
+        :return: sigmoid value of x
+        """
+        return 1 / (1 + math.exp(-x))
+
     def cost_function(self, features, targets, weights):
         """
         :note : Should be done only by output node (1 only)
@@ -81,20 +88,26 @@ class FeedForwardNeuralNetwork:
         :return: trained model
         """
 
-        def sigmoid(x):
-            """
-            :param x: a numeric value
-            :return: sigmoid value of x
-            """
-            return 1 / (1 + math.exp(-x))
-
         for i in range(epoch):
             # Do Mini Batch SGD here
             np.random.shuffle(inputs)  # just dummy
 
     def feed_forward(self, inputs):
+        prev_outputs = inputs
+
         for layer in self.layers:
-            
+            new_outputs = []
+            for node in layer.nodes:
+                # Get sigma
+                sigma = 1 * node.bias
+                for i in range(len(node.weights)):
+                    sigma = sigma + (prev_outputs[i] * node.weights[i])
+
+                output = self.sigmoid(sigma)  # Use sigmoid activation
+                new_outputs.append(output)  # Append result to new_outputs
+                node.set_output(output) # set the output as the node's output
+
+            prev_outputs = new_outputs.copy()
 
 
 # Test
