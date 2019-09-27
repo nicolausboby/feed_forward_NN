@@ -14,12 +14,12 @@ print(model)
 for layer in model.layers:
     print(layer)
     print(len(layer.nodes))
-    # for node in layer.nodes:
-    #     print(node)
+    for node in layer.nodes:
+        print(node)
 model.fit(X, y)
-print("\n\nSESUDAH")
+print("\nAFTER FITTING")
 for layer in model.layers:
     print(layer)
     print(len(layer.nodes))
-    # for node in layer.nodes:
-    #     print(node)
+    for node in layer.nodes:
+        print(node)

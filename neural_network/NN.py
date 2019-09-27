@@ -12,7 +12,6 @@ class Node(object):
         self.n_weights = n_weights
         self.bias = 1
 
-        print("BIKIN NODE")
         for i in range(n_weights + 1):
             # Initiate the weights with random value 
             self.weights.append(random.random())
@@ -45,12 +44,11 @@ class Layer(object):
     def __init__(self, nb_nodes, input_len):
         # nb_nodes : number of node in the layer
         # input_len : number of input edges
-        print("BIKIN LAYER")
         self.nodes = []
         self.nb_nodes = nb_nodes
         for i in range(nb_nodes):
             self.nodes.append(Node(input_len))
-        print(self.nodes)
+        # print(self.nodes)
 
     def _update(self, input_len):
         if input_len <= 0: raise ValueError("Invalid number of input")
@@ -68,12 +66,12 @@ class FeedForwardNeuralNetwork(object):
 
     def feed_forward(self, inputs):
         for i, layer in enumerate(self.layers):
-            if i==0: # hidden layer[1] 
+            if i==0: # hidden layer[0] 
                 for node in layer.nodes:
                     v = self.dot(node.weights[1:], inputs)
                     v += node.bias * node.weights[0]
                     node.set_output(self.sigmoid(v))
-            else:
+            else:   # hidden layer[1..N]
                 for node in layer.nodes:
                     y_prev = []
                     for prev_node in self.layers[i-1].nodes:
@@ -116,10 +114,9 @@ class FeedForwardNeuralNetwork(object):
                 new_layer = Layer(nb_nodes=n_node, input_len=2)
                 self.layers.append(new_layer)
             else:
-                self.layers.append(Layer(n_node, nb_nodes[i-1]))
-                for layer in self.layers:
-                    for node in layer.nodes:
-                        print("DEBUG NOT FIRST", node)
+                new_layer = Layer(n_node, nb_nodes[i-1])
+                self.layers.append(new_layer)
+
 
         # print("DEBUG==========",len(self.layers[0].nodes))
 
