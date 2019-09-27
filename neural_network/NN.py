@@ -12,13 +12,14 @@ class Node(object):
         self.n_weights = n_weights
         self.bias = 1
 
+        print("BIKIN NODE")
         for i in range(n_weights + 1):
-            # Initiate the weights with random value    
+            # Initiate the weights with random value 
             self.weights.append(random.random())
 
-    def __call__(self, n_input):
+    def _update(self, n_input):
         self.n_weights  = n_input
-        for i in range(n_weights + 1):
+        for i in range(self.n_weights + 1):
             self.weights.append(random.random())
 
     def __str__(self):
@@ -38,34 +39,64 @@ class Node(object):
 
 
 
-class Layer:
+class Layer(object):
     # Number of nodes in one Layer
-    nodes = []
-    nb_nodes = 0
 
-    def __init__(self, nb_nodes, input_len=1):
+    def __init__(self, nb_nodes, input_len):
+        # nb_nodes : number of node in the layer
+        # input_len : number of input edges
+        print("BIKIN LAYER")
+        self.nodes = []
         self.nb_nodes = nb_nodes
         for i in range(nb_nodes):
             self.nodes.append(Node(input_len))
+        print(self.nodes)
 
-    def __call__(self, input_len):
+    def _update(self, input_len):
         if input_len <= 0: raise ValueError("Invalid number of input")
-        for node in nodes:
-            node(input_len)
+        for node in self.nodes:
+            node._update(input_len)
 
     def __str__(self):
         return "Layer :\n  > nb_nodes = " + str(self.nb_nodes)
 
 
-class FeedForwardNeuralNetwork:
+class FeedForwardNeuralNetwork(object):
     layers = []
     learning_rate = 0.01
     momentum = 0.01
 
-    def feed_forward(self, X):
-        for layer in layers:
-            for node in layer:
-                pass
+    def feed_forward(self, inputs):
+        for i, layer in enumerate(self.layers):
+            if i==0: # hidden layer[1] 
+                for node in layer.nodes:
+                    v = self.dot(node.weights[1:], inputs)
+                    v += node.bias * node.weights[0]
+                    node.set_output(self.sigmoid(v))
+            else:
+                for node in layer.nodes:
+                    y_prev = []
+                    for prev_node in self.layers[i-1].nodes:
+                        y_prev.append(prev_node.output)
+                    v = self.dot(node.weights, y_prev)
+                    node.set_output(self.sigmoid(v))
+
+    def fit(self, X, y):
+        """
+        :param X: matrix 2D inputs
+        :param y: list of inputs
+        :return: sigmoid value of x
+        """
+        self.layers[0]._update(len(X[0])) #reshape weights hidden layer to input
+
+        for row in X:
+            self.feed_forward(row)
+            # self.backward_prop(y)
+            # self.update_weigths()
+
+        return
+
+    def update_weigths(self):
         return
 
     def __init__(self, hidden_layers=1, nb_nodes=[1]):
@@ -75,16 +106,22 @@ class FeedForwardNeuralNetwork:
         for i in nb_nodes:
             if i <= 0: raise ValueError('Invalid nb_nodes')
 
-        self._output_layer = Layer(1)
+        self._output_layer = Layer(1, nb_nodes[-1])
         self._nb_layers = hidden_layers
         self._nb_nodes = nb_nodes
         self.layers = []
 
         for i, n_node in enumerate(nb_nodes):
-            self.layers.append(Layer(n_node))
+            if i==0:# First hidden layer
+                new_layer = Layer(nb_nodes=n_node, input_len=2)
+                self.layers.append(new_layer)
+            else:
+                self.layers.append(Layer(n_node, nb_nodes[i-1]))
+                for layer in self.layers:
+                    for node in layer.nodes:
+                        print("DEBUG NOT FIRST", node)
 
-    def fit(self, X, y):
-        return
+        # print("DEBUG==========",len(self.layers[0].nodes))
 
     def predict(self):
         return
@@ -99,6 +136,11 @@ class FeedForwardNeuralNetwork:
         :return: sigmoid value of x
         """
         return 1 / (1 + math.exp(-x))
+
+    def dot(self, K, L):
+        if len(K) != len(L):
+            return 0
+        return sum(i[0] * i[1] for i in zip(K, L))
 
 
     def cost_function(self, features, targets, weights):
@@ -147,12 +189,3 @@ class FeedForwardNeuralNetwork:
                     delta = node.output * (1 - node.output) * (out_node.weights[j+1] * out_node.delta)
                     node.set.delta(delta)
         return
-
-
-# Test
-FFNN = FeedForwardNeuralNetwork()
-print(FFNN.__str__())
-for layer in FFNN.layers:
-    print(layer.__str__())
-    for node in layer.nodes:
-        print(node.__str__())
