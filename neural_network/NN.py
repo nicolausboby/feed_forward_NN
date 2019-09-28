@@ -102,6 +102,29 @@ class FeedForwardNeuralNetwork(object):
             self.feed_forward(row)
             # self.backward_prop(y)
             # self.update_weigths()
+        return
+
+    def partial_fit(self, X, y, batch_size):
+        """
+        :param X: matrix 2D inputs (batch sized)
+        :param y: targets
+        :param batch_size: row size per batch
+        :return:
+        """
+
+        self.layers[0]._update(len(X[0]))  # reshape weights hidden layer to input
+
+        # Forward pass and Backprop per row
+        i = 1
+        for row in X:
+            self.feed_forward(row)
+            # self.backward_prop(y)
+
+            # Update weights per batch
+            if i % batch_size == 0:
+                self.update_weigths()
+
+            i = i+1
 
         return
 
@@ -165,22 +188,15 @@ class FeedForwardNeuralNetwork(object):
         return 1.0 / (2 * N) * squared_error.sum()
 
 
-    def mb_gradient_descent(self, inputs, batch_size= 32, epoch=10):
+    def mb_gradient_descent(self, inputs, targets, batch_size=32, epoch=10):
         """
         :param inputs: train data
         :param batch_size: Size of batch per weight update
-        :param hidden_layer: Number of hidden layer(s) inside NN
-        :param nb_nodes: Number of nodes per hidden layer
-        :param l_r: Size of steps taken
-        :param momentum:
         :param epoch: number of iteration(s)
         :return: trained model
         """
-
         for i in range(epoch):
-            # Do Mini Batch SGD here
-            np.random.shuffle(inputs)  # just dummy
-
+            self.partial_fit(inputs, targets, batch_size)
 
     def backward_prop(self, target):
         # For output layer
