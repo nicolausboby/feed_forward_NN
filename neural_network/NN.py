@@ -77,14 +77,17 @@ class FeedForwardNeuralNetwork(object):
                     y_prev = []
                     for prev_node in self.layers[i-1].nodes:
                         y_prev.append(prev_node.output)
-                    v = self.dot(node.weights, y_prev)
+                    v = self.dot(node.weights[1:], y_prev)
+                    v += node.bias * node.weights[0]
                     node.set_output(self.sigmoid(v))
 
         y_hidden = []
         for last_nodes in self.layers[-1].nodes:
             y_hidden.append(last_nodes.output)
         v_output = self.dot(self._output_layer.nodes[0].weights, y_hidden)
+        v_output += self._output_layer.nodes[0].bias * node.weights[0]
         self._output_layer.nodes[0].set_output(self.sigmoid(v_output))
+
 
     def fit(self, X, y):
         """
