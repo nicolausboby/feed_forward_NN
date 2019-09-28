@@ -6,6 +6,7 @@ import pandas as pd
 
 class Node(object):
     output = np.NaN
+    delta = np.NaN
     def __init__(self, n_weights=4):
         # weights[0] for bias
         # weights[1..N] for inputs or previous layer
@@ -198,14 +199,23 @@ class FeedForwardNeuralNetwork(object):
             self.partial_fit(inputs, targets, batch_size)
 
     def backward_prop(self, target):
+        # For output layer
+        outnode = self._output_layer.nodes[0]
+        delta_outnode = outnode.output * (1 - outnode.output) * (target - outnode.output)
+        self._output_layer.nodes[0].set_delta(delta_outnode)
+        # For hidden layer
         for i, layer in enumerate(reversed(self.layers)):
-            if i == self.nb_layers - 1:
-                for node in layer.nodes:
-                    delta = node.output * (1 - node.output) * (target - node.output)
-                    node.set_delta(delta)
+            # Last hidden layer
+            if i == self._nb_layers - 1:
+                for j, node in enumerate(layer.nodes):
+                    hidden_delta = node.output * (1 - node.output) * (outnode.weights[j+1] * delta_outnode)
+                    node.set_delta(hidden_delta)
+            # 1..N-1 hidden layers
             else:
                 for j, node in enumerate(layer.nodes):
-                    out_node = self.layers[-1].nodes[0]
-                    delta = node.output * (1 - node.output) * (out_node.weights[j+1] * out_node.delta)
-                    node.set.delta(delta)
-        return
+                    # Multiply weights*delta for all nodes in next layer
+                    result = 0
+                    for nextlayer_node in self.layers[i+1].nodes:
+                        result = result + (nextlayer_node.weights[j+1] * nextlayer_node.delta)
+                    hidden_delta = node.output * (1 - node.output) * result
+                    node.set_delta(hidden_delta)
