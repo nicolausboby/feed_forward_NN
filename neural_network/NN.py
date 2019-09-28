@@ -5,6 +5,7 @@ import pandas as pd
 
 
 class Node(object):
+    output = np.NaN
     def __init__(self, n_weights=4):
         # weights[0] for bias
         # weights[1..N] for inputs or previous layer
@@ -78,6 +79,12 @@ class FeedForwardNeuralNetwork(object):
                         y_prev.append(prev_node.output)
                     v = self.dot(node.weights, y_prev)
                     node.set_output(self.sigmoid(v))
+
+        y_hidden = []
+        for last_nodes in self.layers[-1].nodes:
+            y_hidden.append(last_nodes.output)
+        v_output = self.dot(self._output_layer.nodes[0].weights, y_hidden)
+        self._output_layer.nodes[0].set_output(self.sigmoid(v_output))
 
     def fit(self, X, y):
         """

@@ -16,6 +16,7 @@ for layer in model.layers:
     print(len(layer.nodes))
     for node in layer.nodes:
         print(node)
+print("output :", model._output_layer.nodes[0].output)
 model.fit(X, y)
 print("\nAFTER FITTING")
 for layer in model.layers:
@@ -23,3 +24,4 @@ for layer in model.layers:
     print(len(layer.nodes))
     for node in layer.nodes:
         print(node)
+print("output :", model._output_layer.nodes[0].output)
