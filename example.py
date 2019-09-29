@@ -1,6 +1,5 @@
 import neural_network
-from neural_network.helper import read_csv
-from neural_network.helper import encoding_label
+from neural_network.helper import read_csv, encoding_label, one_hot_encoding
 
 model = neural_network.FeedForwardNeuralNetwork(hidden_layers=2, nb_nodes=[1,1])
 
@@ -20,8 +19,11 @@ for item in data:
 print(X)
 print(y)
 print("Label Encoding")
-encoding_label(X)
+print("encode X")
+one_hot_encoding(X)
+print("encode Y")
 encoding_label(y)
+
 print(X)
 print(y)
 

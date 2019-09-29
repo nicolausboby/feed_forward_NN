@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def read_csv(filename, return_type="list"):
     f = open(filename, 'r')
 
@@ -50,3 +53,58 @@ def encoding_label(X):
                     class_number[X[row]] = num
                     X[row] = num
                     num = num + 1
+
+def one_hot_encoding(X):
+    new_columns = dict()
+    classes = dict()
+
+    # if X is multidimensional
+    if isinstance(X[0], list):
+        for col in range(len(X[0])):
+            col_classes = []
+
+            # Iterate per row to find classes and replace categorical to numerical inplace
+            for row in range(len(X)):
+                if type(X[row][col]) is not str:
+                    break
+                else:
+                    if X[row][col] in col_classes:
+                        new_columns[X[row][col]][row] = 1
+                    else:
+                        col_classes.append(X[row][col])
+                        new_columns[X[row][col]] = [0] * len(X)
+            if col_classes:
+                classes[col] = col_classes
+
+        keys = classes.keys()
+        for key in sorted(keys, reverse=True):
+            for row in X:
+                del row[key]
+            
+        new_X = []
+        for key in new_columns:
+            new_X.append(new_columns[key])
+
+        new_X = (np.array(new_X)).T
+        new_X = new_X.tolist()
+        for i, row in enumerate(X):
+            row.extend(new_X[i])
+    else:
+        # if X is one-dimensional
+        if type(X[0]) is str:
+            col_classes = []
+            for row in range(len(X)):
+                if X[row] in col_classes:
+                    new_columns[X[row]][row] = 1
+                else:
+                    col_classes.append(X[row])
+                    new_columns[X[row]] = [0] * len(X)
+        if col_classes:
+            classes[0] = col_classes
+    
+        X = []
+        new_X = []
+        for key in new_columns:
+            new_X.append(new_columns[key])
+
+        X = new_X
