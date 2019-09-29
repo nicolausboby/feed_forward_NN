@@ -38,6 +38,8 @@ class Node(object):
     def set_delta(self, delta):
         self.delta = delta
 
+    def set_weight(self, index, weight):
+        self.weights[index] = weight
 
 
 class Layer(object):
@@ -112,23 +114,52 @@ class FeedForwardNeuralNetwork(object):
         :return:
         """
 
-        self.layers[0]._update(len(X[0]))  # reshape weights hidden layer to input
+        # self.layers[0]._update(len(X[0]))  # reshape weights hidden layer to input
 
         # Forward pass and Backprop per row
-        i = 1
-        for row in X:
+        for i, row in enumerate(X):
             self.feed_forward(row)
-            # self.backward_prop(y)
+
+            # #Test FEED FORWARD
+            # for layer in self.layers:
+            #     for node in layer.nodes:
+            #         print("HIDLAYER OUTPUT: " + str(node.output))
+            # print("OUTLAYER OUTPUT: " + str(self._output_layer.nodes[0].output))
+
+
+            self.backward_prop(y[i])
+
+            # #Test BACKPROP
+            # print("OUTLAYER DELTA: " + str(self._output_layer.nodes[0].delta))
+            # for layer in reversed(self.layers):
+            #     for node in layer.nodes:
+            #         print("HIDLAYER DELTA: " + str(node.delta))
+            
 
             # Update weights per batch
-            if i % batch_size == 0:
+            if (i+1) % batch_size == 0:
                 self.update_weigths()
 
-            i = i+1
+            # #Test UPDATE WEIGHT
+            # for layer in self.layers:
+            #     for node in layer.nodes:
+            #         print("HIDLAYER WEIGHTS: " + str(node.weights))
+            # print("OUTLAYER WEIGHTS: " + str(self._output_layer.nodes[0].weights))
 
         return
 
     def update_weigths(self):
+        # For hidden layers
+        for layer in self.layers:
+            for node in layer.nodes:
+                for i, weight in enumerate(node.weights):
+                    new_weight = weight + (self.momentum * weight) + (self.learning_rate * node.delta * node.output)
+                    node.set_weight(i, new_weight)
+        # For output layer
+        for node in self._output_layer.nodes:
+            for i, weight in enumerate(node.weights):
+                new_weight = weight + (self.momentum * weight) + (self.learning_rate * node.delta * node.output)
+                node.set_weight(i, new_weight)
         return
 
     def __init__(self, hidden_layers=1, nb_nodes=[1]):
@@ -195,6 +226,8 @@ class FeedForwardNeuralNetwork(object):
         :param epoch: number of iteration(s)
         :return: trained model
         """
+        self.layers[0]._update(len(inputs[0]))  # reshape weights hidden layer to input
+
         for i in range(epoch):
             self.partial_fit(inputs, targets, batch_size)
 
@@ -206,16 +239,18 @@ class FeedForwardNeuralNetwork(object):
         # For hidden layer
         for i, layer in enumerate(reversed(self.layers)):
             # Last hidden layer
-            if i == self._nb_layers - 1:
+            if i == 0:
                 for j, node in enumerate(layer.nodes):
                     hidden_delta = node.output * (1 - node.output) * (outnode.weights[j+1] * delta_outnode)
                     node.set_delta(hidden_delta)
             # 1..N-1 hidden layers
             else:
-                for j, node in enumerate(layer.nodes):
-                    # Multiply weights*delta for all nodes in next layer
-                    result = 0
-                    for nextlayer_node in self.layers[i+1].nodes:
-                        result = result + (nextlayer_node.weights[j+1] * nextlayer_node.delta)
-                    hidden_delta = node.output * (1 - node.output) * result
-                    node.set_delta(hidden_delta)
+                if(self._nb_layers > 1):
+                    for j, node in enumerate(layer.nodes):
+                        # Multiply weights*delta for all nodes in next layer
+                        result = 0
+                        for nextlayer_node in self.layers[self._nb_layers-i].nodes:
+                            result = result + (nextlayer_node.weights[j+1] * nextlayer_node.delta)
+                        hidden_delta = node.output * (1 - node.output) * result
+                        node.set_delta(hidden_delta)
+        return
