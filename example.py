@@ -6,10 +6,15 @@ from neural_network.helper import read_csv
 model = neural_network.FeedForwardNeuralNetwork(hidden_layers=2, nb_nodes=[1,1])
 
 data = read_csv("weather.csv")
-print(data)
+# print(data)
 
-X = [[1, 80, 85.1, 1], [2, 83, 86, 2]]
-y = [0, 1]
+X = []
+for item in data:
+    X.append(item[:-1])
+
+y = []
+for item in data:
+    y.append(item[-1])
 
 # FOR USUAL FIT
 print(model)
