@@ -1,5 +1,5 @@
 import neural_network
-from neural_network.helper import read_csv, label_encoding, one_hot_encoding
+from neural_network.helper import read_csv, label_encoding, one_hot_encoding, accuracy
 
 # Data Reading
 data = read_csv("weather.csv")
@@ -50,6 +50,7 @@ print("\n\nPREDICTION (Using Weather Dataset)\n")
 outputs = []
 for i in range(len(X)):
     # print(X[i])
-    outputs.append(model.predict(X[i]))
+    outputs.append(round(model.predict(X[i])))
 print(outputs)
 print(y)
+print("Accuracy : " + str(accuracy(outputs, y)))

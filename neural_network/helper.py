@@ -9,6 +9,7 @@ def sigmoid(x):
     """
     return 1 / (1 + math.exp(-x))
 
+
 def dot(K, L):
     if len(K) != len(L):
         print("Length is not same, Len K : " + str(len(K)) + ", Len L : " + str(len(L)))
@@ -16,6 +17,20 @@ def dot(K, L):
         print("L : " + str(L))
         return 0
     return sum(i[0] * i[1] for i in zip(K, L))
+
+
+def accuracy(outputs, targets):
+    if len(outputs) != len(targets):
+        print("Outputs and targets size don't match")
+        return 0
+    else:
+        same = 0
+        for i in range(len(outputs)):
+            if outputs[i] == targets[i]:
+                same += 1
+
+        return same / len(targets)
+
 
 def read_csv(filename, return_type="list"):
     f = open(filename, 'r')
@@ -36,7 +51,6 @@ def read_csv(filename, return_type="list"):
 
 
 def label_encoding(X):
-
     # if X is multidimensional
     if isinstance(X[0], list):
         print("list")
@@ -70,6 +84,7 @@ def label_encoding(X):
                     X[row] = num
                     num = num + 1
 
+
 def one_hot_encoding(X):
     new_columns = dict()
     classes = dict()
@@ -96,7 +111,7 @@ def one_hot_encoding(X):
         for key in sorted(keys, reverse=True):
             for row in X:
                 del row[key]
-            
+
         new_X = []
         for key in new_columns:
             new_X.append(new_columns[key])
@@ -117,7 +132,7 @@ def one_hot_encoding(X):
                     new_columns[X[row]] = [0] * len(X)
         if col_classes:
             classes[0] = col_classes
-    
+
         X = []
         new_X = []
         for key in new_columns:
