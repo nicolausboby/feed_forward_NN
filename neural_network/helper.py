@@ -1,5 +1,21 @@
 import numpy as np
+import math
 
+
+def sigmoid(x):
+    """
+    :param x: a numeric value
+    :return: sigmoid value of x
+    """
+    return 1 / (1 + math.exp(-x))
+
+def dot(K, L):
+    if len(K) != len(L):
+        print("Length is not same, Len K : " + str(len(K)) + ", Len L : " + str(len(L)))
+        print("K : " + str(K))
+        print("L : " + str(L))
+        return 0
+    return sum(i[0] * i[1] for i in zip(K, L))
 
 def read_csv(filename, return_type="list"):
     f = open(filename, 'r')
@@ -19,7 +35,7 @@ def read_csv(filename, return_type="list"):
     return matrix
 
 
-def encoding_label(X):
+def label_encoding(X):
 
     # if X is multidimensional
     if isinstance(X[0], list):
