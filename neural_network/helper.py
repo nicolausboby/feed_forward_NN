@@ -11,6 +11,7 @@ def sigmoid(x):
 
 
 def dot(K, L):
+    # dot product of 2 matrices
     if len(K) != len(L):
         print("Length is not same, Len K : " + str(len(K)) + ", Len L : " + str(len(L)))
         print("K : " + str(K))
@@ -20,6 +21,7 @@ def dot(K, L):
 
 
 def accuracy(outputs, targets):
+    # calculate accuracy of predicitions from expected target
     if len(outputs) != len(targets):
         print("Outputs and targets size don't match")
         return 0
@@ -33,6 +35,7 @@ def accuracy(outputs, targets):
 
 
 def read_csv(filename, return_type="list"):
+    # parse csv file
     f = open(filename, 'r')
 
     lines = f.read().splitlines()
@@ -51,6 +54,8 @@ def read_csv(filename, return_type="list"):
 
 
 def label_encoding(X):
+    # Encode input X with label encoding
+
     # if X is multidimensional
     if isinstance(X[0], list):
         print("list")
@@ -86,6 +91,8 @@ def label_encoding(X):
 
 
 def one_hot_encoding(X):
+    # Encode input X with label encoding
+
     new_columns = dict()
     classes = dict()
 

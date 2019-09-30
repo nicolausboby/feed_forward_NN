@@ -166,8 +166,8 @@ class FeedForwardNeuralNetwork(object):
 
         for row in X:
             self.feed_forward(row)
-            # self.backward_prop(y)
-            # self.update_weigths()
+            self.backward_prop(y)
+            self.update_weigths()
         return
 
     def partial_fit(self, X, y, batch_size):
@@ -178,37 +178,14 @@ class FeedForwardNeuralNetwork(object):
         :return:
         """
 
-        # self.layers[0]._update(len(X[0]))  # reshape weights hidden layer to input
-
         # Forward pass and Backprop per row
         for i, row in enumerate(X):
             self.feed_forward(row)
-
-            # #Test FEED FORWARD
-            # for layer in self.layers:
-            #     for node in layer.nodes:
-            #         print("HIDLAYER OUTPUT: " + str(node.output))
-            # print("OUTLAYER OUTPUT: " + str(self._output_layer.nodes[0].output))
-
             self.backward_prop(y[i])
-
-            # #Test BACKPROP
-            # print("OUTLAYER DELTA: " + str(self._output_layer.nodes[0].delta))
-            # for layer in reversed(self.layers):
-            #     for node in layer.nodes:
-            #         print("HIDLAYER DELTA: " + str(node.delta))
-
             # Update weights per batch
             if (i + 1) % batch_size == 0:
                 self.update_weigths()
 
-            # #Test UPDATE WEIGHT
-            # for layer in self.layers:
-            #     for node in layer.nodes:
-            #         print("HIDLAYER WEIGHTS: " + str(node.weights))
-            # print("OUTLAYER WEIGHTS: " + str(self._output_layer.nodes[0].weights))
-
-        return
 
     def mb_gradient_descent(self, inputs, targets, batch_size=32, epoch=10):
         """
@@ -223,29 +200,7 @@ class FeedForwardNeuralNetwork(object):
             self.partial_fit(inputs, targets, batch_size)
 
     def predict(self, inputs):
-        # DARI FEED FORWARD
-        # for i, layer in enumerate(self.layers):
-        #     if i == 0:  # hidden layer[0]
-        #         for node in layer.nodes:
-        #             v = dot(node.weights[1:], inputs)
-        #             v += node.bias * node.weights[0]
-        #             node.set_output(sigmoid(v))
-        #     else:  # hidden layer[1..N]
-        #         for node in layer.nodes:
-        #             y_prev = []
-        #             for prev_node in self.layers[i - 1].nodes:
-        #                 y_prev.append(prev_node.output)
-        #             v = dot(node.weights[1:], y_prev)
-        #             v += node.bias * node.weights[0]
-        #             node.set_output(sigmoid(v))
-        #
-        # y_hidden = []
-        # for last_nodes in self.layers[-1].nodes:
-        #     y_hidden.append(last_nodes.output)
-        # v_output = dot(self._output_layer.nodes[0].weights[1:], y_hidden)
-        # v_output += self._output_layer.nodes[0].bias * self._output_layer.nodes[0].weights[0]
-        # return sigmoid(v_output)
-
+        # predict target result using the model
         y_prev = inputs
         y_temp = []
 
