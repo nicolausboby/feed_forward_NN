@@ -67,7 +67,7 @@ class Layer(object):
 class FeedForwardNeuralNetwork(object):
     layers = []
     learning_rate = 0.01
-    momentum = 0.01
+    momentum = 0.9
 
     def __str__(self):
         return "FFNN : \n  > nb_layers = " + str(self._nb_layers)

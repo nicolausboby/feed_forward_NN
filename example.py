@@ -24,7 +24,7 @@ label_encoding(y)
 # print(X)
 # print(y)
 
-model = neural_network.FeedForwardNeuralNetwork(hidden_layers=2, nb_nodes=[1,1])
+model = neural_network.FeedForwardNeuralNetwork(hidden_layers=2, nb_nodes=[2, 2])
 
 # print("\nBEFORE FITTING")
 # print(model)
